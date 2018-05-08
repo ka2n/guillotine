@@ -13,6 +13,7 @@ import (
 type Specification struct {
 	WatchedFile string `required:"true" split_words:"true"`
 	Interval    int    `default:"1"`
+	Delay       int    `default:"0"`
 }
 
 func main() {
@@ -42,8 +43,11 @@ func main() {
 		for {
 			time.Sleep(time.Duration(s.Interval) * time.Second)
 			if _, err := os.Stat(s.WatchedFile); err == nil {
-				cmd.Process.Kill()
 				fmt.Println(s.WatchedFile, "exists")
+				if s.Delay > 0 {
+					time.Sleep(time.Duration(s.Delay) * time.Second)
+				}
+				cmd.Process.Kill()
 				break
 			}
 		}
