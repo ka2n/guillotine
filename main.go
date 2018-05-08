@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
 	"log"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
 type Specification struct {
