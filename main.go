@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"syscall"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -14,6 +15,7 @@ type Specification struct {
 	WatchedFile string `required:"true" split_words:"true"`
 	Interval    int    `default:"1"`
 	Delay       int    `default:"0"`
+	KillDelay   int    `default:"30"`
 }
 
 func main() {
@@ -47,6 +49,8 @@ func main() {
 				if s.Delay > 0 {
 					time.Sleep(time.Duration(s.Delay) * time.Second)
 				}
+				cmd.Process.Signal(syscall.SIGTERM)
+				time.Sleep(time.Duration(s.KillDelay) * time.Second)
 				cmd.Process.Kill()
 				break
 			}
