@@ -45,12 +45,16 @@ func main() {
 		for {
 			time.Sleep(time.Duration(s.Interval) * time.Second)
 			if _, err := os.Stat(s.WatchedFile); err == nil {
-				fmt.Println(s.WatchedFile, "exists")
 				if s.Delay > 0 {
-					time.Sleep(time.Duration(s.Delay) * time.Second)
+					duration := time.Duration(s.Delay) * time.Second
+					fmt.Printf("%s exists, send SIGTERM after %v\n", s.WatchedFile, duration)
+					time.Sleep(duration)
+				} else {
+					fmt.Println(s.WatchedFile, "exists, send SIGTERM immediately")
 				}
 				cmd.Process.Signal(syscall.SIGTERM)
 				time.Sleep(time.Duration(s.KillDelay) * time.Second)
+				fmt.Println("KillDelay passed, send SIGKILL")
 				cmd.Process.Kill()
 				break
 			}
