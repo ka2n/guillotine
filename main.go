@@ -62,4 +62,25 @@ func main() {
 	}()
 
 	cmd.Wait()
+
+	os.Exit(getExitStatus(cmd))
+}
+
+func getExitStatus(cmd *exec.Cmd) int {
+	if cmd.ProcessState == nil {
+		return 1
+	}
+
+	sys := cmd.ProcessState.Sys()
+	if sys != nil {
+		if code, ok := sys.(syscall.WaitStatus); ok {
+			return code.ExitStatus()
+		}
+	}
+
+	if !cmd.ProcessState.Success() {
+		return 1
+	}
+
+	return 0
 }
